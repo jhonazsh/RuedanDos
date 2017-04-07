@@ -5,6 +5,8 @@ Tu Perfil
 @endsection
 
 
+
+
 @section('content')
 
     <div class="row">
@@ -15,18 +17,74 @@ Tu Perfil
               <div class="contenedor-perfil text-center">
                 @if(count($perfil_user)>0)
                   <img src="{{ asset('perfiles') }}/{{ $perfil_user->imagen }}" alt="..." class="img-perfil">
+
+                  <h4 class="text-center"><b>{{ Auth::user()->name }}</b></h4>
+                  <div class="bio-self text-center">
+                    {{ $perfil_user->bio }}
+                    <span class="glyphicon glyphicon-chevron-down"></span>
+                  </div>
+
+                
+                  <!-- ................. app-bio/VueJS ................. -->
+                  <!--<div id="app-bio">
+                    <button class="btn btn-default btn-sm" style="margin-bottom:0.5em" v-if="show" v-on:click="hideButtonBio">Biografía</button>
+                    <template v-else style="display:none" v-bind:style="styleShow">
+                      <div v-if="showOnly">
+                        <textarea class="form-control input-sm perfil-textarea-bio" placeholder="Escribe tu Bio ..." v-on:keyup="currentLengthBio" v-on:keydown="currentLengthBioDown" v-model="bio" rows="1"></textarea>
+                        <div class="perfil-sub-bio">
+                          <span class="perfil-bio-length"><small class="color-b1b1b1">@{{ bioLength }} de 140</small></span>
+                          <span>
+                            <button class="btn btn-success btn-xs" v-on:click="sendBio">Guardar</button>
+                            <button class="btn btn-default btn-xs" v-on:click="cancelarBio">Cancelar</button>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="text-center" v-else>
+                        @{{ bioGuardar }}
+                      </div>
+                    </template>
+                    
+                  </div>-->
+                  <!-- ................. end app-bio .......... -->
+
                 @else
+
                   <div class="perfil-no-photo">
                     <span class="glyphicon glyphicon-user font-size__6"></span>
                   </div>
+
+                  <h4 class="text-center"><b>{{ Auth::user()->name }}</b></h4>
+                
+                  <!-- ................. app-bio/VueJS ................. -->
+                  <div id="app-bio">
+                    <button class="btn btn-default btn-sm" style="margin-bottom:0.5em" v-if="show" v-on:click="hideButtonBio">Biografía</button>
+                    <template v-else style="display:none" v-bind:style="styleShow">
+                      <div v-if="showOnly">
+                        <textarea class="form-control input-sm perfil-textarea-bio" placeholder="Escribe tu Bio ..." v-on:keyup="currentLengthBio" v-on:keydown="currentLengthBioDown" v-model="bio" rows="1"></textarea>
+                        <div class="perfil-sub-bio">
+                          <span class="perfil-bio-length"><small class="color-b1b1b1">@{{ bioLength }} de 140</small></span>
+                          <span>
+                            <button class="btn btn-success btn-xs" v-on:click="sendBio">Guardar</button>
+                            <button class="btn btn-default btn-xs" v-on:click="cancelarBio">Cancelar</button>
+                          </span>
+                        </div>
+                      </div>
+                      <div class="text-center" v-else>
+                        @{{ bioGuardar }}
+                      </div>
+                    </template>
+                    
+                  </div>
+                  <!-- ................. end app-bio .......... -->
+
+
                 @endif
-                <h4 class="text-center"><b>{{ Auth::user()->name }}</b></h4>
-                <p>
-                  <button class="btn btn-default btn-sm">Biografía</button>
-                </p>
-                <div class="moto" >
+                
+
+
+                <!--<div class="moto" >
                   <span class="dot" id="1">. </span><span class="dot" id="2">. </span><span class="dot" id="3">. </span><i class="fa fa-motorcycle" aria-hidden="true"></i><span class="dot" id="4"> .</span><span class="dot" id="5"> .</span><span class="dot" id="6"> .</span>
-                </div>
+                </div>-->
                 
               </div>
               <div class="content-perfil">
@@ -42,6 +100,9 @@ Tu Perfil
                   </div>
                   <div class="item-content-perfil">
                     <span class="glyphicon glyphicon-picture"></span> &nbsp;&nbsp;&nbsp; Fotos
+                  </div>
+                  <div class="item-content-perfil">
+                    <i class="fa fa-users" aria-hidden="true"></i> &nbsp;&nbsp;&nbsp; Amigos
                   </div>
 
                   
@@ -66,7 +127,7 @@ Tu Perfil
 
 
         </div>
-        <div class="col-md-7 ">
+        <div class="col-md-6 ">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">Mis Historias</div>
 
@@ -176,8 +237,8 @@ Tu Perfil
                 </div>
             </div>
         </div>
-        <div class="col-md-2" >
-          <div style="position:fixed; width:134.96px">
+        <div class="col-md-3" >
+          <div style="position:fixed; width:262.5px">
             <div >
               <div class="text-center" style="font-size:2.5em; color: #b5b5b5">{{ count($historias_collect) }}</div>
               <div class="text-center" style="font-size:1.2em; color: #b5b5b5">
@@ -209,10 +270,14 @@ Tu Perfil
         </div>
     </div>
 
+
+
 @endsection
 
 @section('scripts')
     <script>
+    /*---- script load moto ----*/      
+
     var i=1;
     dot(i);
 
@@ -229,6 +294,68 @@ Tu Perfil
         
       }
       
-        
+
+      
     </script>
 @endsection
+
+@section('scriptsvue')
+    <script>
+    /*-- usando vue -- */
+    var bio = new Vue({
+      el:'#app-bio',
+      
+      data: {
+        show: true,
+        styleShow: "",
+        bio:"",
+        bioLength: 0,
+        bioGuardar:"",
+        showOnly: true
+      },
+
+      methods:{
+        bioReaction: function(){
+          if(this.bio.length<=140){
+            this.bioLength = this.bio.length;
+          }
+          else{
+            this.bioLength = 140 - this.bio.length;
+          }
+        },
+        hideButtonBio: function(){
+          this.show = false;
+          this.styleShow = "display:block";
+          
+        },
+        currentLengthBio: function(_evt){
+           this.bioReaction();
+           autosize($('.perfil-textarea-bio'));
+        },
+        currentLengthBioDown: function(_evt){
+          if(_evt.which == 8){
+            this.bioReaction(); 
+          }
+        },
+        sendBio: function(){
+          this.bioGuardar = this.bio;
+          this.bio = "";
+          this.showOnly = false;
+        },
+        cancelarBio: function(){
+          this.bio="";
+          this.show = true;
+
+        }
+
+      }
+      
+    });
+    
+
+    
+
+    
+    </script>
+@endsection
+

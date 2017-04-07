@@ -9,7 +9,7 @@ class Perfil extends Model
 {
     protected $table = 'perfiles';
 
-    protected $fillable = ['imagen', 'id_user'];
+    protected $fillable = ['imagen', 'bio', 'id_user'];
 
     public function setImagenAttribute($imagen){
     	$this->attributes['imagen'] = Carbon::now()->second.$imagen->getClientOriginalName();

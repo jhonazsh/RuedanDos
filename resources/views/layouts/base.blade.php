@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="/css/main.css">
     
     <script src="https://use.fontawesome.com/1cf0ab8e3f.js"></script>
-    
+
+    <!-- scripts vue.js -->
+    <script src="/js/vue.js"></script>
+
+
 </head>
 <body>
 
@@ -40,8 +44,8 @@
                 @if (Auth::guest())
        
                 @else   
-                                      
-                    <li><a href="/historia/nueva">Nueva Historia </a></li>   
+                    <li><a href="/historia/nueva" class="navbar-brand">RuedanDos </a></li>                  
+                    <li><a href="/historia/nueva" >Nueva Historia &nbsp;<i class="fa fa-plus" aria-hidden="true"></i> </a></li>   
                                                   
                 @endif
 
@@ -129,9 +133,13 @@
     </div>
     
     
-    <script src="/js/vue.js"></script>
+    <script src="/js/jquery.js"></script>
     <script src="/js/app.js"></script>
+    <script src="/js/autosize.js"></script>
+    
     @yield('scripts')
+
+    @yield('scriptsvue')
     
 </body>
 </html>

@@ -21,7 +21,8 @@ Route::post('/comentario/crear', 'ComentarioController@crear');
 
 Route::get('/perfil', 'PerfilUsuarioController@index');
 Route::get('/perfil/editar', 'PerfilUsuarioController@editar');
-Route::post('/perfil/actualizar', 'PerfilUsuarioController@actualizar');
+Route::post('/perfil/editar/crear', 'PerfilUsuarioController@editarcrear');
+Route::post('/perfil/editar/actualizar/{id}', 'PerfilUsuarioController@actualizar');
 
 /* test routes */
 Route::get('/prueba', 'IndexController@prueba');

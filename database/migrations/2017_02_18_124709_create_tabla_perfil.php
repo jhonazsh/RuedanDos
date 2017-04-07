@@ -17,6 +17,7 @@ class CreateTablaPerfil extends Migration
 
             $table->increments('id');
             $table->string('imagen');
+            $table->string('bio');
             
             $table->integer('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users');

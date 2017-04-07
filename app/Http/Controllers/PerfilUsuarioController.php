@@ -84,16 +84,21 @@ class PerfilUsuarioController extends Controller
         
     }
 
-    public function editar_imagen(){
-    	return view('perfil_editar_imagen');
+    public function editarcrear(Request $request){
+    	\App\Perfil::create([
+            'imagen'=>$request['imagen'],
+            'bio'=>$request['bio'],
+            'id_user'=>$request['id_user']
+            ]);
     }
 
-    public function actualizar(Request $request){
-    	\App\Perfil::create([
-    		'imagen'=>$request['imagen'],
-    		'id_user'=>$request['id_user']
-    		]);
+    public function actualizar(Request $request, $id){
+    	
+        $perfil = \App\Perfil::find($id);
+        $perfil->fill($request->all());
+        $perfil->save();
 
+        return redirect('/perfil');
     	
     }
 }
