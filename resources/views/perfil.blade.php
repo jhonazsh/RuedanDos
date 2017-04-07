@@ -19,33 +19,17 @@ Tu Perfil
                   <img src="{{ asset('perfiles') }}/{{ $perfil_user->imagen }}" alt="..." class="img-perfil">
 
                   <h4 class="text-center"><b>{{ Auth::user()->name }}</b></h4>
-                  <div class="bio-self text-center">
-                    {{ $perfil_user->bio }}
-                    <span class="glyphicon glyphicon-chevron-down"></span>
-                  </div>
 
-                
-                  <!-- ................. app-bio/VueJS ................. -->
-                  <!--<div id="app-bio">
-                    <button class="btn btn-default btn-sm" style="margin-bottom:0.5em" v-if="show" v-on:click="hideButtonBio">Biografía</button>
-                    <template v-else style="display:none" v-bind:style="styleShow">
-                      <div v-if="showOnly">
-                        <textarea class="form-control input-sm perfil-textarea-bio" placeholder="Escribe tu Bio ..." v-on:keyup="currentLengthBio" v-on:keydown="currentLengthBioDown" v-model="bio" rows="1"></textarea>
-                        <div class="perfil-sub-bio">
-                          <span class="perfil-bio-length"><small class="color-b1b1b1">@{{ bioLength }} de 140</small></span>
-                          <span>
-                            <button class="btn btn-success btn-xs" v-on:click="sendBio">Guardar</button>
-                            <button class="btn btn-default btn-xs" v-on:click="cancelarBio">Cancelar</button>
-                          </span>
-                        </div>
-                      </div>
-                      <div class="text-center" v-else>
-                        @{{ bioGuardar }}
-                      </div>
-                    </template>
-                    
-                  </div>-->
-                  <!-- ................. end app-bio .......... -->
+                  <!-- ................. app-edit-bio/VueJS ................. -->
+                  <div id="app-edit-bio">
+                    <div class="bio-self text-center" v-on:click="modificarBio" v-if="showBio" >
+                      {{ $perfil_user->bio }}
+                    </div>
+                    <div class="" style="display:none" v-else v-bind:style="showBlock">
+                      <textarea style="resize:none; overflow:hidden" rows="1" class="form-control input-sm text-center perfil-textarea-autosize bio-self-text"  >@{{ bioSelf }}</textarea>
+                    </div>
+                  </div>
+                  <!-- ................. app-edit-bio ................. -->
 
                 @else
 
@@ -352,6 +336,30 @@ Tu Perfil
       
     });
     
+
+
+    var bioEdit = new Vue({
+      el: "#app-edit-bio",
+      data:{
+        showBio:true,
+        showBlock:"",
+        bioSelf:""
+      },
+      methods:{
+        modificarBio: function(){
+          this.showBio=false;
+          this.showBlock="display:block";
+
+          
+          autosize($('.perfil-textarea-autosize'));
+          
+
+          this.bioSelf="{{ $perfil_user->bio }}";
+          
+        }
+
+      }
+    });
 
     
 
