@@ -23,13 +23,32 @@ Tu Perfil
                   <!-- ................. app-edit-bio/VueJS ................. -->
                   <div id="app-edit-bio">
                     <div class="bio-self text-center" v-on:click="modificarBio" v-if="showBio" >
-                      {{ $perfil_user->bio }}
+                      <span v-if="bioServer">
+                        {{ $perfil_user->bio }}
+                      </span>
+                      <span v-else style="display:none" v-bind:style="bioServerDisplay">
+                        @{{ bioModificado }}
+                      </span> 
                     </div>
-                    <div class="" style="display:none" v-else v-bind:style="showBlock">
-                      <textarea style="resize:none; overflow:hidden" rows="1" class="form-control input-sm text-center perfil-textarea-autosize bio-self-text"  >@{{ bioSelf }}</textarea>
-                    </div>
+                    <template style="display:none" v-else v-bind:style="showBlock">
+                      <div>
+                        <div class="" >
+                          <textarea style="resize:none; overflow:hidden" rows="1" class="form-control input-sm text-center perfil-textarea-autosize bio-self-text" v-on:click="sobreTextarea" v-model="bioSelf" v-on:keyup="currentLengthBio" v-on:keydown="currentLengthBioDown">@{{ bioSelf }}</textarea>
+                          <input type="hidden" name="_token" value="{!! csrf_token() !!}" id="token">
+                        </div>
+                        <div class="perfil-sub-bio">
+                          <span class="perfil-bio-length"><small class="color-b1b1b1">@{{ bioLengthSelf }} de 140</small></span>
+                          <span>
+                            <button class="btn btn-success btn-xs" v-on:click="sendBioModificado">Guardar</button>
+                            <button class="btn btn-default btn-xs" v-on:click="cancelarModificarBio">Cancelar</button>
+                          </span>
+                        </div>   
+                      </div>
+                      
+                      
+                    </template>
                   </div>
-                  <!-- ................. app-edit-bio ................. -->
+                  <!-- ................. end app-edit-bio ................. -->
 
                 @else
 
@@ -337,25 +356,75 @@ Tu Perfil
     });
     
 
-
+    /* modificar bio - vuejs*/
     var bioEdit = new Vue({
       el: "#app-edit-bio",
       data:{
         showBio:true,
         showBlock:"",
-        bioSelf:""
+        bioSelf:"",
+        bioLengthSelf: 0,
+        bioModificado:"",
+        bioServer:true,
+        bioServerDisplay:""
       },
       methods:{
+        bioReaction: function(){
+          if(this.bioSelf.length<=140){
+            this.bioLengthSelf = this.bioSelf.length;
+          }
+          else{
+            this.bioLengthSelf = 140 - this.bioSelf.length;
+          }
+        },
         modificarBio: function(){
           this.showBio=false;
           this.showBlock="display:block";
 
-          
-          autosize($('.perfil-textarea-autosize'));
-          
+          if(this.bioModificado==""){
+            this.bioSelf=S("{{ $perfil_user->bio }}").decodeHTMLEntities().s;
+          }
+          else{
+            this.bioSelf=this.bioModificado;
+          }
 
-          this.bioSelf="{{ $perfil_user->bio }}";
-          
+          this.bioLengthSelf=this.bioSelf.length;
+          this.sobreTextarea();
+        },
+        sobreTextarea: function(){
+          autosize($('.perfil-textarea-autosize'));
+        },
+        cancelarModificarBio: function(){
+          this.showBio=true;
+          this.bioSelf=S("{{ $perfil_user->bio }}").decodeHTMLEntities().s;
+        },
+        currentLengthBio: function(_evt){
+           this.bioReaction();
+           //autosize($('.perfil-textarea-bio'));
+        },
+        currentLengthBioDown: function(_evt){
+          if(_evt.which == 8){
+            this.bioReaction(); 
+          }
+        },
+        sendBioModificado: function(){
+          this.bioServer=false;
+          this.showBio=true;
+          this.bioServerDisplay="display:block";
+          this.bioModificado=this.bioSelf;
+
+          var token = $("#token").val();
+
+          $.ajax({
+            headers: {'X-CSRF-Token':token},
+            url:"{{ url('/ajax/perfil/editar') }}"+'/'+{{ $perfil_user->id }},
+            data: {bio:this.bioModificado},
+            type:'POST',
+            success: function(data){
+              console.log(data);
+            }
+
+          });
         }
 
       }

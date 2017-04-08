@@ -136,6 +136,9 @@
     <script src="/js/jquery.js"></script>
     <script src="/js/app.js"></script>
     <script src="/js/autosize.js"></script>
+    <script src="/js/vendor/utf8.js"></script>
+    <script src="/js/vendor/utf8-regex.js"></script>
+    <script src="/js/vendor/string.js"></script>
     
     @yield('scripts')
 

@@ -101,4 +101,12 @@ class PerfilUsuarioController extends Controller
         return redirect('/perfil');
     	
     }
+
+    public function guardar_bio_ajax(Request $request, $id){
+        $perfil_encontrado = \App\Perfil::find($id);
+        $perfil_encontrado->bio = $request->bio;
+        $perfil_encontrado->save();
+
+        return $perfil_encontrado;
+    }
 }

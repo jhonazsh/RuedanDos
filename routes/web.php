@@ -23,6 +23,8 @@ Route::get('/perfil', 'PerfilUsuarioController@index');
 Route::get('/perfil/editar', 'PerfilUsuarioController@editar');
 Route::post('/perfil/editar/crear', 'PerfilUsuarioController@editarcrear');
 Route::post('/perfil/editar/actualizar/{id}', 'PerfilUsuarioController@actualizar');
+/* ajax */
+Route::post('/ajax/perfil/editar/{id}', 'PerfilUsuarioController@guardar_bio_ajax');
 
 /* test routes */
 Route::get('/prueba', 'IndexController@prueba');
