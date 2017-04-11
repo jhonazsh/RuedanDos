@@ -14,7 +14,6 @@
     <!-- scripts vue.js -->
     <script src="/js/vue.js"></script>
 
-
 </head>
 <body>
 
@@ -142,7 +141,7 @@
     
     @yield('scripts')
 
-    @yield('scriptsvue')
+    @yield('scripts-vue')
     
 </body>
 </html>

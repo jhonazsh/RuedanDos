@@ -9,14 +9,28 @@ Tu Perfil
 
 @section('content')
 
-    <div class="row">
+    <div class="row" id="app-all">
         <div class="col-md-3">
           <div class="panel panel-default" style="position:fixed;width:262.5px">
             
             <div class="panel-body" style="padding:0">
               <div class="contenedor-perfil text-center">
                 @if(count($perfil_user)>0)
-                  <img src="{{ asset('perfiles') }}/{{ $perfil_user->imagen }}" alt="..." class="img-perfil">
+
+                  <!-- ................. app-edit-photo/VueJS ................. -->
+                  <div id="app-edit-photo">
+                    <img src="{{ asset('perfiles') }}/{{ $perfil_user->imagen }}" alt="..." class="img-perfil" v-on:click="showViewPhoto" v-on:mouseover="showOptionsPhoto" v-on:mouseleave="showOptionsPhotoOut">
+                    <div class="botones-options" v-bind:style="showOptionsPhotoValue" v-on:mouseover="showOptionsPhoto"> 
+                      <div>
+                        <span class="glyphicon glyphicon-edit photo-icons" v-on:click="showEditPhotoView"></span>
+                      </div>
+                      <div>
+                        <span class="glyphicon glyphicon-remove photo-icons" v-on:click="eliminarPhoto"></span>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- ................. app-edit-photo ................. -->
+
 
                   <h4 class="text-center"><b>{{ Auth::user()->name }}</b></h4>
 
@@ -131,14 +145,16 @@ Tu Perfil
 
         </div>
         <div class="col-md-6 ">
-            <div class="panel panel-default">
+            
+            <div v-if="showViewTemplatePhoto == 0">
+              <div class="panel panel-default">
                 <div class="panel-heading text-center">Mis Historias</div>
 
                 <div class="panel-body" style="padding:0">
                     @if(count($historias_collect)>0)
                       @foreach ($historias_collect as $historia)
                           
-                          <div class="contenedor-historia">
+                        <div class="contenedor-historia">
                           <h3>{{ $historia['titulo'] }}</h3>
                           <small>{{$historia['created_at']}}</small>
                           <p class="text-justify" style="margin-top:1em">{{$historia['contenido']}}</p>
@@ -230,15 +246,77 @@ Tu Perfil
                       
                           
                           
-                      @endforeach
-                    @else
-                      <div class="perfil-no-history text-center">
-                        <h1 class="text-center">Aun no tienes historias.</h1>
-                        <a href="{{ url('/historia/nueva') }}" class="btn btn-success ">Crea Una Historia</a>
-                      </div>
-                    @endif
-                </div>
+                        @endforeach
+                      @else
+                        <div class="perfil-no-history text-center">
+                          <h1 class="text-center">Aun no tienes historias.</h1>
+                          <a href="{{ url('/historia/nueva') }}" class="btn btn-success ">Crea Una Historia</a>
+                        </div>
+                      @endif
+                  </div>
+              </div>
             </div>
+
+            <template  style="display:none" v-bind:style="showViewEditPhotoDisplay" v-else-if="showViewTemplatePhoto == 1">
+              <div class="panel panel-default" v-if="">
+                <div class="panel-heading">
+                  <div class="row">
+                    <div class="col-md-6 text-left">
+                      Foto de Perfil
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <button class="btn btn-default btn-xs" v-on:click="showHistory">
+                        Cerrar
+                        <span class="glyphicon glyphicon-remove"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel-body" style="padding:15px">
+                  <img src="{{ asset('perfiles') }}/{{ $perfil_user->imagen }}" width="100%">
+                  
+                </div>
+              </div>
+            </template>
+
+            <template  style="display:none" v-bind:style="showViewEditPhotoDisplay" v-else>
+              <div class="panel panel-default">
+                <div class="panel-heading text-center">
+                  <div class="row">
+                    <div class="col-md-6 text-left">
+                      Editar Foto de Perfil
+                    </div>
+                    <div class="col-md-6 text-right">
+                      <button class="btn btn-default btn-xs" v-on:click="showHistory">
+                        Cerrar
+                        <span class="glyphicon glyphicon-remove"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="panel-body" style="padding:10px">
+                  
+                  <div class="text-center">
+                    <img src="{{ asset('perfiles') }}/{{ $perfil_user->imagen }}" class="edit-class">
+                    
+                  </div>
+                  <div class="text-center">
+                   
+                    <input type="file" id='imagenAC'>
+                    <input type="hidden" name="_tokensito" value="{!! csrf_token() !!}" id="tokensito">
+                  </div>
+                  <div class="text-center">
+                    <button class="btn btn-success" v-on:click="cambiarFoto">Cambiar Foto</button>
+                  </div>
+                  
+                </div>
+
+
+              </div>
+            </template>
+            
         </div>
         <div class="col-md-3" >
           <div style="position:fixed; width:262.5px">
@@ -302,9 +380,9 @@ Tu Perfil
     </script>
 @endsection
 
-@section('scriptsvue')
+@section('scripts-vue')
     <script>
-    /*-- usando vue -- */
+    /*--  ----------- /   Crear Bio con VueJS   / -------  -- */
     var bio = new Vue({
       el:'#app-bio',
       
@@ -354,12 +432,18 @@ Tu Perfil
       }
       
     });
-    
+    /* --------------------   / End /    ------------------ */
 
-    /* modificar bio - vuejs*/
-    var bioEdit = new Vue({
-      el: "#app-edit-bio",
+
+    /* -- ----------- / Editar la Foto Perfil - VueJS / ------------ -- */
+
+    var editPhoto = new Vue({
+      el:'#app-all',
       data:{
+        showViewTemplatePhoto:0,
+        showViewEditPhotoDisplay:"",
+        showOptionsPhotoValue:"",
+        /* data editar bio */
         showBio:true,
         showBlock:"",
         bioSelf:"",
@@ -369,6 +453,43 @@ Tu Perfil
         bioServerDisplay:""
       },
       methods:{
+        showEditPhotoView: function(){
+          this.showViewTemplatePhoto=2;
+          this.showViewEditPhotoDisplay="display:block";
+        },
+        eliminarPhoto: function(){
+          console.log('eliminar');
+        },
+        showHistory: function(){
+          this.showViewTemplatePhoto=0;
+          this.showViewEditPhotoDisplay="display:none";
+        },
+        showViewPhoto: function(){
+          this.showViewTemplatePhoto=1;
+          this.showViewEditPhotoDisplay="display:block";
+        },
+        showOptionsPhoto: function(){
+          this.showOptionsPhotoValue="display:block";
+        },
+        showOptionsPhotoOut: function(){
+          this.showOptionsPhotoValue="display:none";
+        },
+        cambiarFoto: function(){
+          var tokensito = $("#tokensito").val();
+          var cadena = $('#imagenAC').val();
+          
+          $.ajax({
+            headers: {'X-CSRF-Token':tokensito},
+            url:"{{ url('/ajax/perfil/editar/photo') }}"+'/'+{{ $perfil_user->id }},
+            data: {imagen:cadena},
+            type:'POST',
+            success: function(data){
+              console.log(data);
+            }
+          });
+          
+        },
+        /* ---- editar bio --- */
         bioReaction: function(){
           if(this.bioSelf.length<=140){
             this.bioLengthSelf = this.bioSelf.length;
@@ -417,7 +538,7 @@ Tu Perfil
 
           $.ajax({
             headers: {'X-CSRF-Token':token},
-            url:"{{ url('/ajax/perfil/editar') }}"+'/'+{{ $perfil_user->id }},
+            url:"{{ url('/ajax/perfil/editar/bio') }}"+'/'+{{ $perfil_user->id }},
             data: {bio:this.bioModificado},
             type:'POST',
             success: function(data){
@@ -430,8 +551,7 @@ Tu Perfil
       }
     });
 
-    
-
+    /* -------------------- / End / --------------------*/
     
     </script>
 @endsection

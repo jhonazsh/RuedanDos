@@ -24,7 +24,8 @@ Route::get('/perfil/editar', 'PerfilUsuarioController@editar');
 Route::post('/perfil/editar/crear', 'PerfilUsuarioController@editarcrear');
 Route::post('/perfil/editar/actualizar/{id}', 'PerfilUsuarioController@actualizar');
 /* ajax */
-Route::post('/ajax/perfil/editar/{id}', 'PerfilUsuarioController@guardar_bio_ajax');
+Route::post('/ajax/perfil/editar/bio/{id}', 'PerfilUsuarioController@guardar_bio_ajax');
+Route::post('/ajax/perfil/editar/photo/{id}', 'PerfilUsuarioController@guardar_photo_ajax');
 
 /* test routes */
 Route::get('/prueba', 'IndexController@prueba');

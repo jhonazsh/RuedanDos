@@ -90,6 +90,8 @@ class PerfilUsuarioController extends Controller
             'bio'=>$request['bio'],
             'id_user'=>$request['id_user']
             ]);
+
+        return $request['imagen'];
     }
 
     public function actualizar(Request $request, $id){
@@ -99,6 +101,8 @@ class PerfilUsuarioController extends Controller
         $perfil->save();
 
         return redirect('/perfil');
+
+        //return $request['imagen'];
     	
     }
 
@@ -108,5 +112,13 @@ class PerfilUsuarioController extends Controller
         $perfil_encontrado->save();
 
         return $perfil_encontrado;
+    }
+
+    public function guardar_photo_ajax(Request $request, $id){
+        $perfil_encontrado_foto = \App\Perfil::find($id);
+        $perfil_encontrado_foto->imagen = $request->imagen;
+        $perfil_encontrado_foto->save();
+
+        return $request['imagen'];
     }
 }
