@@ -480,7 +480,7 @@ Tu Perfil
           
           $.ajax({
             headers: {'X-CSRF-Token':tokensito},
-            url:"{{ url('/ajax/perfil/editar/photo') }}"+'/'+{{ $perfil_user->id }},
+            url:"{{ url('/ajax/perfil/editar/photo') }}"+'/'+'{{ $perfil_user->id }}',
             data: {imagen:cadena},
             type:'POST',
             success: function(data){
