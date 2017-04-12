@@ -115,10 +115,11 @@ class PerfilUsuarioController extends Controller
     }
 
     public function guardar_photo_ajax(Request $request, $id){
-        $perfil_encontrado_foto = \App\Perfil::find($id);
-        $perfil_encontrado_foto->imagen = $request->imagen;
-        //$perfil_encontrado_foto->save();
+        $perfil_foto = \App\Perfil::find($id);
+        $perfil_foto->imagen = " ".explode("C:fakepath", stripslashes($request->imagen) )[1];
+        $perfil_foto->save();
 
-        return $perfil_encontrado_foto->imagen;
+        //return split('C:fakepath', stripslashes($request->imagen) )
+        return  $perfil_encontrado_foto->imagen;
     }
 }
